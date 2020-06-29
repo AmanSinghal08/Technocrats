@@ -1,21 +1,26 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 
 const app = express();
-
-
-app.get('/', (req, res) => {
-
-    res.send({ status: "ok", data: "this is a test api" });
+app.post('sign-up', bodyParser.json(), (req, res) => {
+    console.log(req.body);
+    var collection = collection.db('technocrats').collection('user');
+    collection.find({ email: req.body.email }).toArray((err, docs) => {
+        if (!err && docs.length > 0) {
+            res.send({ status: "failed", data: "email already exits" })
+        } else {
+            collection.insert(req.body, (err, result) => {
+                if (!err) {
+                    res.send({ status: "ok", data: "signup success...." });
+                } else {
+                    res.send({ status: "failed", data: err });
+                }
+            })
+        }
+    })
 })
 
-
-
-
-app.get('/user', (req, res) => {
-    var id = req.query.id;
-    res.send({ status: "ok", data: [{ name: "X", age: 78, id: id }, { name: "Y", age: 67 }] });
-})
 
 
 
